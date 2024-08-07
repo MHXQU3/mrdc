@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 import yaml 
 import psycopg2
 
@@ -25,6 +25,12 @@ class DatabaseConnector:
         url = f'{DBTYPE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}'
         engine = create_engine(url)
         return engine
+    
+    def list_db_tables(self, engine):
+        with engine.connect() as connection:
+            inspector = inspect(connection)
+            tables = inspector.get_table_names()
+        return tables
 
 path = 'db_creds.yaml'
 connector = DatabaseConnector(path)
