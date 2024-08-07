@@ -27,9 +27,9 @@ class DatabaseConnector:
         return engine
     
     def list_db_tables(self, engine):
-        with engine.connect() as connection:
-            inspector = inspect(connection)
-            tables = inspector.get_table_names()
+        connection = engine.connect()
+        inspector = inspect(connection)
+        tables = inspector.get_table_names()
         return tables
 
 path = 'db_creds.yaml'
