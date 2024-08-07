@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 import yaml 
+import psycopg2
 
 class DatabaseConnector:
 
@@ -27,5 +28,6 @@ class DatabaseConnector:
 
 path = 'db_creds.yaml'
 connector = DatabaseConnector(path)
-connector.read_db_creds()
+engine = connector.init_db_engine()
+print(engine)
     
