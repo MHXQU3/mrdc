@@ -3,3 +3,5 @@ RDS_PASSWORD: AiCore2022
 RDS_USER: aicore_admin
 RDS_DATABASE: postgres
 RDS_PORT: 5432
+RDS_DATABASE_TYPE: postgresql
+DBAPI: psycopg2
