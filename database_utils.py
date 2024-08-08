@@ -31,9 +31,3 @@ class DatabaseConnector:
         inspector = inspect(connection)
         tables = inspector.get_table_names()
         return tables
-
-path = 'db_creds.yaml'
-connector = DatabaseConnector(path)
-engine = connector.init_db_engine()
-print(engine)
-    
