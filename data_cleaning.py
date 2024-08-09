@@ -8,4 +8,7 @@ from data_extraction import DataExtractor
 from database_utils import DatabaseConnector
 
 class DataCleaning:
-    pass
+
+    def __init__(self):
+        pass
+     
