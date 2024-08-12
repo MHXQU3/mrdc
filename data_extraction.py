@@ -22,4 +22,4 @@ extractor = DataExtractor(connector)
 
 # Extract user data
 user_data_df = extractor.extract_user_data('legacy_users')
-print(user_data_df.head())
+print(user_data_df.head()) 

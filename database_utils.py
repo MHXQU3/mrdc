@@ -33,6 +33,15 @@ class DatabaseConnector:
             return tables 
 
     def upload_to_db(self, data_frame, table_name, db_creds):
-        local_engine = create_engine(f"{db_creds['LOCAL_DATABASE_TYPE']}+{db_creds['LOCAL_DB_API']}://{db_creds['LOCAL_USER']}:{db_creds['LOCAL_PASSWORD']}@{db_creds['LOCAL_HOST']}:{db_creds['LOCAL_PORT']}/{db_creds['LOCAL_DATABASE']}")
-        local_engine.connect()
-        data_frame.to_sql(table_name, local_engine, if_exists='replace')
+        print(db_creds)
+        db_url = f"{db_creds['LOCAL_DATABASE_TYPE']}+{db_creds['LOCAL_DB_API']}://" \
+                f"{db_creds['LOCAL_USER']}:{db_creds['LOCAL_PASSWORD']}@" \
+                f"{db_creds['LOCAL_HOST']}:{db_creds['LOCAL_PORT']}/" \
+                f"{db_creds['LOCAL_DATABASE']}"
+        
+        try:
+            local_engine = create_engine(db_url)
+            with local_engine.connect() as connection:
+                data_frame.to_sql(table_name, connection, if_exists='replace', index=False)
+        except Exception as e:
+            print(f"An error occurred while uploading to database: {e}")

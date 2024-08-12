@@ -5,3 +5,12 @@ RDS_DATABASE: postgres
 RDS_PORT: 5432
 RDS_DATABASE_TYPE: postgresql
 DBAPI: psycopg2
+
+
+LOCAL_DATABASE_TYPE: postgresql 
+LOCAL_DB_API: psycopg2           
+LOCAL_USER: postgres        
+LOCAL_PASSWORD: password     
+LOCAL_HOST: localhost            
+LOCAL_PORT: 5432                 
+LOCAL_DATABASE: sales_data      
