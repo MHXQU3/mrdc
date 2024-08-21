@@ -6,22 +6,17 @@ import pandas as pd
 def main():
     # Initialize the DatabaseConnector
     connector = DatabaseConnector()
-    
     # Read the database credentials
     db_creds = connector.read_db_creds()
-    
     # Initialize the database engine
     engine = connector.init_db_engine(db_creds)
-    
     # Extract data from the 'legacy_users' table
     extractor = DataExtractor(connector)
-    user_data_df = extractor.extract_user_data('legacy_users')
-    
-    # Clean the extracted user data
     cleaner = DataCleaning()
-    cleaned_data_df = cleaner.clean_user_data(user_data_df)
     
-    # Upload the cleaned data to the 'dim_users' table in the RDS database
+    # Extract and clean user data
+    user_data_df = extractor.extract_user_data('legacy_users')
+    cleaned_data_df = cleaner.clean_user_data(user_data_df)
     connector.upload_to_db(cleaned_data_df, 'dim_users', engine)
 
     # Extract the number of stores
@@ -31,31 +26,26 @@ def main():
     num_stores = extractor.list_number_of_stores(number_of_stores_endpoint, headers)
     
     if num_stores:
-        # Retrieve store data
         store_data_df = extractor.retrieve_stores_data(num_stores, stores_endpoint, headers)
-        
-        # Clean the store data
         cleaned_store_data_df = cleaner.clean_store_data(store_data_df)
-        
-        # Upload the cleaned store data to the 'dim_store_details' table in the RDS database
         connector.upload_to_db(cleaned_store_data_df, 'dim_store_details', engine)
     
-    # Extract product data from S3
+    # Extract and clean product data
     s3_address = 's3://data-handling-public/products.csv'
     product_data_df = extractor.extract_from_s3(s3_address)
-    
-    # Clean the product data
     cleaned_product_data_df = cleaner.clean_products_data(product_data_df)
-    
-    # Upload the cleaned product data to the 'dim_products' table in the RDS database
     connector.upload_to_db(cleaned_product_data_df, 'dim_products', engine)
 
-    #Dealing with the orders data
+    # Extract and clean order data
     orders_df = extractor.read_rds_table('orders_table')
-        
-    # Clean the orders data
     cleaned_orders_df = cleaner.clean_order_data(orders_df)
-    connector.upload_to_db(cleaned_orders_df, 'orders_table', db_creds)
+    connector.upload_to_db(cleaned_orders_df, 'orders_table', engine)
+
+    # Extract and clean date data
+    date_url = "https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json"
+    date_data_df = extractor.extract_from_s3(date_url)
+    cleaned_date_data_df = cleaner.clean_date_data(date_data_df)
+    connector.upload_to_db(cleaned_date_data_df, 'dim_date_times', engine)
 
 if __name__ == '__main__':
     main()
