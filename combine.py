@@ -26,25 +26,29 @@ def main():
 
     # Extract the number of stores
     headers = {"x-api-key": "yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
-    stores_endpoint = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
-    num_stores = extractor.list_number_of_stores(stores_endpoint, headers)
+    stores_endpoint = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details"
+    number_of_stores_endpoint = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
+    num_stores = extractor.list_number_of_stores(number_of_stores_endpoint, headers)
     
-    if num_stores is not None:
-        # Extract store data from the API
-        store_data_list = []
-        for store_number in range(0, num_stores):
-            store_endpoint = f"https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{store_number}"
-            store_data_df = extractor.retrieve_stores_data(store_endpoint, headers)
-            store_data_list.append(store_data_df)
+    if num_stores:
+        # Retrieve store data
+        store_data_df = extractor.retrieve_stores_data(num_stores, stores_endpoint, headers)
         
-        # Concatenate all store data into a single DataFrame
-        all_store_data_df = pd.concat(store_data_list, ignore_index=True)
-        
-        # Clean the extracted store data
-        cleaned_store_data_df = cleaner.clean_store_data(all_store_data_df)
+        # Clean the store data
+        cleaned_store_data_df = cleaner.clean_store_data(store_data_df)
         
         # Upload the cleaned store data to the 'dim_store_details' table in the RDS database
-        connector.upload_to_db(cleaned_store_data_df, 'dim_store_details', db_creds)
+        connector.upload_to_db(cleaned_store_data_df, 'dim_store_details', engine)
     
+    # Extract product data from S3
+    s3_address = 's3://data-handling-public/products.csv'
+    product_data_df = extractor.extract_from_s3(s3_address)
+    
+    # Clean the product data
+    cleaned_product_data_df = cleaner.clean_products_data(product_data_df)
+    
+    # Upload the cleaned product data to the 'dim_products' table in the RDS database
+    connector.upload_to_db(cleaned_product_data_df, 'dim_products', engine)
+
 if __name__ == '__main__':
     main()

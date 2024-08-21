@@ -5,6 +5,7 @@ import tabula as tb
 import requests
 import json
 import psycopg2
+import boto3
 from database_utils import DatabaseConnector
 
 class DataExtractor:
@@ -44,6 +45,23 @@ class DataExtractor:
 
         df = pd.DataFrame(data)
 
+        return df
+    
+    def extract_from_s3(self, s3_address):
+        s3 = boto3.resource('s3')
+        if s3_address.startswith('s3://'):
+            s3_address = s3_address[len('s3://'):]
+        
+        bucket_name, file_key = s3_address.split('/', 1)
+        obj = s3.Object(bucket_name, file_key)
+        body = obj.get()['Body']
+        
+        # Determine file type
+        if file_key.endswith('.csv'):
+            df = pd.read_csv(body)
+        elif file_key.endswith('.json'):
+            df = pd.read_json(body)
+        df = df.reset_index(drop=True)
         return df
     
     

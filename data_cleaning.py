@@ -47,3 +47,48 @@ class DataCleaning:
         store_data['continent'] = store_data['continent'].str.replace('eeEurope', 'Europe').str.replace('eeAmerica', 'America')
 
         return store_data
+    
+    def convert_product_weights(self, weight):
+        
+        weight = str(weight).strip().lower()
+        
+        if 'kg' in weight:
+            weight = weight.replace('kg', '')
+            weight = float(weight)
+
+        elif 'ml' in weight:
+            weight = weight.replace('ml', '')
+            weight = float(weight)/1000
+
+        elif 'g' in weight:
+            weight = weight.replace('g', '')
+            weight = float(weight)/1000
+
+        elif 'lb' in weight:
+            weight = weight.replace('lb', '')
+            weight = float(weight)*0.453591
+
+        elif 'oz' in weight:
+            weight = weight.replace('oz', '')
+            weight = float(weight)*0.0283495
+            
+        return weight
+    
+    def clean_products_data(self, product_data):
+        product_data.replace('NULL', np.NaN, inplace=True)
+        product_data['date_added'] = pd.to_datetime(product_data['date_added'], errors='coerce')
+        product_data.dropna(subset=['date_added'], how='any', axis=0, inplace=True)
+        
+        # Handle the weight column
+        product_data['weight'] = product_data['weight'].apply(lambda x: x.replace(' .', '') if isinstance(x, str) else x)
+        
+        # Split weights that contain 'x'
+        temp_cols = product_data.loc[product_data['weight'].str.contains('x', na=False), 'weight'].str.split('x', expand=True)
+        numeric_cols = temp_cols.apply(lambda x: pd.to_numeric(x.str.extract('(\d+\.?\d*)', expand=False)), axis=1)
+        final_weight = numeric_cols.prod(axis=1)
+        product_data.loc[product_data['weight'].str.contains('x', na=False), 'weight'] = final_weight
+
+        # Convert weights to kg
+        product_data['weight'] = product_data['weight'].apply(self.convert_product_weights)
+        product_data.drop(product_data.columns[0], axis=1, inplace=True) 
+        return product_data
