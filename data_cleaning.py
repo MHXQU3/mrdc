@@ -35,3 +35,15 @@ class DataCleaning:
         card_data['card_number'] = card_data['card_number'].str.replace(r'\D', '', regex=True)
         card_data = card_data[~card_data['card_number'].str.contains('[a-zA-Z?]', na=False)]
         return card_data
+    
+    def clean_store_data(self, store_data):
+        store_data = store_data.reset_index(drop=True)
+        store_data.replace('NULL', np.NaN, inplace=True)
+        store_data['opening_date'] = pd.to_datetime(store_data['opening_date'], errors ='coerce')
+        store_data.loc[[31, 179, 248, 341, 375], 'staff_numbers'] = [78, 30, 80, 97, 39] # individually replaces values that have been inccorectly including text
+        store_data['staff_numbers'] = pd.to_numeric(store_data['staff_numbers'], errors='coerce')
+        store_data.dropna(subset=['staff_numbers'], axis=0, inplace=True)
+
+        store_data['continent'] = store_data['continent'].str.replace('eeEurope', 'Europe').str.replace('eeAmerica', 'America')
+
+        return store_data
