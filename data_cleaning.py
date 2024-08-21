@@ -16,21 +16,22 @@ class DataCleaning:
         user_data_df.replace('NULL', np.nan, inplace=True)
         user_data_df.dropna(subset=['date_of_birth', 'email_address', 'user_uuid'], how='any', axis=0, inplace=True)
         
-        # Convert 'date_of_birth' to datetime, handling errors explicitly
         user_data_df['date_of_birth'] = pd.to_datetime(user_data_df['date_of_birth'], errors='coerce')
-        
-        # Convert 'join_date' to datetime, handling errors explicitly
         user_data_df['join_date'] = pd.to_datetime(user_data_df['join_date'], errors='coerce')
         
         user_data_df = user_data_df.dropna(subset=['join_date'])
 
-        # Handle phone number replacement
         user_data_df.loc[:, 'phone_number'] = user_data_df['phone_number'].str.replace(r'\W', '', regex=True)
         
-        # Drop duplicates and the first column
         user_data_df = user_data_df.drop_duplicates(subset=['email_address'])
         user_data_df.drop(user_data_df.columns[0], axis=1, inplace=True)
-        
-        # Save cleaned data to CSV
+
         user_data_df.to_csv("users.csv", index=False)
         return user_data_df 
+    
+    def clean_card_data(self, card_data):
+        card_data.replace('NULL', np.NaN, inplace=True)
+        card_data.dropna(subset=['card_number'], inplace=True)
+        card_data['card_number'] = card_data['card_number'].str.replace(r'\D', '', regex=True)
+        card_data = card_data[~card_data['card_number'].str.contains('[a-zA-Z?]', na=False)]
+        return card_data
