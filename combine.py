@@ -50,5 +50,12 @@ def main():
     # Upload the cleaned product data to the 'dim_products' table in the RDS database
     connector.upload_to_db(cleaned_product_data_df, 'dim_products', engine)
 
+    #Dealing with the orders data
+    orders_df = extractor.read_rds_table('orders_table')
+        
+    # Clean the orders data
+    cleaned_orders_df = cleaner.clean_order_data(orders_df)
+    connector.upload_to_db(cleaned_orders_df, 'orders_table', db_creds)
+
 if __name__ == '__main__':
     main()

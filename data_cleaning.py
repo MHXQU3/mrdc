@@ -92,3 +92,18 @@ class DataCleaning:
         product_data['weight'] = product_data['weight'].apply(self.convert_product_weights)
         product_data.drop(product_data.columns[0], axis=1, inplace=True) 
         return product_data
+    
+    def clean_order_data(self, data):
+
+        data.drop("level_0", axis=1, inplace=True) 
+        data.drop("1", axis=1, inplace=True) 
+        data.drop(data.columns[0], axis=1, inplace=True)
+        data.drop('first_name', axis=1, inplace=True)
+        data.drop('last_name', axis=1, inplace=True)
+        return data
+    
+    def clean_date_data(self, data):
+        data['year'] = pd.to_numeric(data['year'], errors='coerce')
+        data.dropna(subset=['year'], inplace=True)
+        data.dropna(axis=1, how='all', inplace=True)
+        return data
