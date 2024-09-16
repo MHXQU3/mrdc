@@ -5,11 +5,11 @@ import pandas as pd
 
 def main():
     # Initialize the DatabaseConnector
-    connector = DatabaseConnector()
+    connector = DatabaseConnector('db_creds.yaml')
     # Read the database credentials
     db_creds = connector.read_db_creds()
     # Initialize the database engine
-    engine = connector.init_db_engine(db_creds)
+    engine = connector.init_db_engine()
     # Extract data from the 'legacy_users' table
     extractor = DataExtractor(connector)
     cleaner = DataCleaning()
@@ -17,7 +17,7 @@ def main():
     # Extract and clean user data
     user_data_df = extractor.extract_user_data('legacy_users')
     cleaned_data_df = cleaner.clean_user_data(user_data_df)
-    connector.upload_to_db(cleaned_data_df, 'dim_users', engine)
+    connector.upload_to_db(cleaned_data_df, 'dim_users', db_creds)
 
     # Extract the number of stores
     headers = {"x-api-key": "yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}

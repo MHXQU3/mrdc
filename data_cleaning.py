@@ -84,7 +84,7 @@ class DataCleaning:
         
         # Split weights that contain 'x'
         temp_cols = product_data.loc[product_data['weight'].str.contains('x', na=False), 'weight'].str.split('x', expand=True)
-        numeric_cols = temp_cols.apply(lambda x: pd.to_numeric(x.str.extract('(\d+\.?\d*)', expand=False)), axis=1)
+        numeric_cols = temp_cols.apply(lambda x: pd.to_numeric(x.str.extract(r'(\d+\.?\d*)', expand=False)), axis=1)        
         final_weight = numeric_cols.prod(axis=1)
         product_data.loc[product_data['weight'].str.contains('x', na=False), 'weight'] = final_weight
 

@@ -73,7 +73,7 @@ user_data_df = extractor.extract_user_data('legacy_users')
 print(user_data_df.head()) 
 
 # Extract card data
-link = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
+link = "card_details.pdf"
 card_data = extractor.retrieve_pdf_data(link)
 print(card_data.head())
 

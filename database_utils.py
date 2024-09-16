@@ -33,7 +33,7 @@ class DatabaseConnector:
             return tables 
 
     def upload_to_db(self, data_frame, table_name, db_creds):
-        print(db_creds)
+        #print(db_creds)
         db_url = f"{db_creds['LOCAL_DATABASE_TYPE']}+{db_creds['LOCAL_DB_API']}://" \
                 f"{db_creds['LOCAL_USER']}:{db_creds['LOCAL_PASSWORD']}@" \
                 f"{db_creds['LOCAL_HOST']}:{db_creds['LOCAL_PORT']}/" \
