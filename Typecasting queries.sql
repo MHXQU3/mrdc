@@ -144,4 +144,174 @@ ALTER TABLE dim_card_details
 	ALTER COLUMN expiry_date TYPE VARCHAR(5),
 	ALTER COLUMN date_payment_confirmed TYPE DATE USING CAST(date_payment_confirmed as DATE);
 	
+-- Dim tables primary key / foreign key creation ----------------------------------
+
+-- Adds primary keys in dim_tables
+ALTER TABLE dim_card_details
+	ADD CONSTRAINT pk_card_number PRIMARY KEY (card_number);
+
+ALTER TABLE dim_date_times
+	ADD PRIMARY KEY (date_uuid);
+	
+ALTER TABLE dim_products
+	ADD PRIMARY KEY (product_code);
+	
+ALTER TABLE dim_store_details
+	ADD PRIMARY KEY (store_code);
+	
+ALTER TABLE dim_users
+	ADD PRIMARY KEY (user_uuid);
+	
+-- Finds all card_numbers in orders_table that are not in dim_card_details
+SELECT orders_table.card_number 
+FROM orders_table
+LEFT JOIN dim_card_details
+ON orders_table.card_number = dim_card_details.card_number
+WHERE dim_card_details.card_number IS NULL;
+
+-- Inserts all card_numbers from orders_tale not present in dim_card_details initally, into dim_card_details
+INSERT INTO dim_card_details (card_number)
+SELECT DISTINCT orders_table.card_number
+FROM orders_table
+WHERE orders_table.card_number NOT IN 
+	(SELECT dim_card_details.card_number
+	FROM dim_card_details);
+	
+-- Find the user_uuid values in orders_table that are missing in dim_users	
+SELECT orders_table.user_uuid
+FROM orders_table
+LEFT JOIN dim_users
+ON orders_table.user_uuid = dim_users.user_uuid
+WHERE dim_users.user_uuid IS NULL;
+
+-- Insert the missing user_uuid values from orders_table into dim_users
+INSERT INTO dim_users (user_uuid)
+SELECT DISTINCT orders_table.user_uuid
+FROM orders_table
+WHERE orders_table.user_uuid NOT IN 
+    (SELECT dim_users.user_uuid
+     FROM dim_users);
+
+-- Find product code values missing from orders_table
+SELECT orders_table.product_code
+FROM orders_table
+LEFT JOIN dim_products
+ON orders_table.product_code = dim_products.product_code
+WHERE dim_products.product_code IS NULL;
+
+-- Insert missing product code values into dim_products
+INSERT INTO dim_products (product_code)
+SELECT DISTINCT orders_table.product_code
+FROM orders_table
+WHERE orders_table.product_code NOT IN 
+    (SELECT product_code FROM dim_products);
+
+	
+-- Adds the foreign keys to the orders table
+ALTER TABLE orders_table
+	ADD CONSTRAINT fk_orders_card_number
+	FOREIGN KEY (card_number)
+	REFERENCES dim_card_details(card_number); -- come back to add this
+	
+ALTER TABLE orders_table
+	ADD CONSTRAINT fk_orders_date_uuid
+	FOREIGN KEY (date_uuid)
+	REFERENCES dim_date_times(date_uuid);
+	
+ALTER TABLE orders_table
+	ADD CONSTRAINT fk_orders_product_code
+	FOREIGN KEY (product_code)
+	REFERENCES dim_products(product_code);
+	
+ALTER TABLE orders_table
+	ADD CONSTRAINT fk_orders_store_code
+	FOREIGN KEY (store_code)
+	REFERENCES dim_store_details(store_code);
+	
+ALTER TABLE orders_table
+	ADD CONSTRAINT fk_orders_user_uuid
+	FOREIGN KEY (user_uuid)
+	REFERENCES dim_users(user_uuid);
+	
+-- All primary keys
+
+SELECT
+    kcu.table_name,
+    kcu.column_name,
+    tc.constraint_name
+FROM
+    information_schema.table_constraints AS tc
+JOIN
+    information_schema.key_column_usage AS kcu
+    ON tc.constraint_name = kcu.constraint_name
+WHERE
+    tc.constraint_type = 'PRIMARY KEY'
+    AND tc.table_schema = 'public'; 
+	
+-- All foreign keys
+
+SELECT
+    kcu.table_name,
+    kcu.column_name,
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name,
+    tc.constraint_name
+FROM
+    information_schema.table_constraints AS tc
+JOIN
+    information_schema.key_column_usage AS kcu
+    ON tc.constraint_name = kcu.constraint_name
+JOIN
+    information_schema.constraint_column_usage AS ccu
+    ON ccu.constraint_name = tc.constraint_name
+WHERE
+    tc.constraint_type = 'FOREIGN KEY'
+    AND tc.table_schema = 'public'; 
+	
+-- Removing extra fks	
+
+-- Locating all fks
+SELECT conname
+FROM pg_constraint
+WHERE conrelid = 'orders_table'::regclass
+  AND contype = 'f';
+  
+-- Erasing all extra fks
+ALTER TABLE orders_table
+	DROP CONSTRAINT orders_table_card_number_fkey,
+	DROP CONSTRAINT orders_table_card_number_fkey1,
+	DROP CONSTRAINT orders_table_card_number_fkey2;
+	
+ALTER TABLE orders_table
+	DROP CONSTRAINT orders_table_date_uuid_fkey,
+	DROP CONSTRAINT orders_table_date_uuid_fkey1,
+	DROP CONSTRAINT orders_table_date_uuid_fkey2; -- date
+	
+ALTER TABLE orders_table
+	DROP CONSTRAINT orders_table_user_uuid_fkey,
+	DROP CONSTRAINT orders_table_user_uuid_fkey1,
+	DROP CONSTRAINT orders_table_user_uuid_fkey2; -- user
+	
+ALTER TABLE orders_table
+	DROP CONSTRAINT orders_table_store_code_fkey,
+	DROP CONSTRAINT orders_table_store_code_fkey1;
+	
+ALTER TABLE orders_table
+	DROP CONSTRAINT orders_table_product_code_fkey;
+
+-- All the pk names
+SELECT conname
+FROM pg_constraint
+WHERE conrelid = 'orders_table'::regclass
+  AND contype = 'p'; 
+
+-- All the fk names
+SELECT conname
+FROM pg_constraint
+WHERE conrelid = 'orders_table'::regclass
+  AND contype = 'f';
+  
+
+
+
 	
