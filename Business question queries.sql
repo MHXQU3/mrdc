@@ -24,7 +24,8 @@ with agg_locations AS (
 	SELECT CASE 
 		WHEN dsd.store_type = 'Web Portal' THEN 'Web'
 		ELSE 'Offline'
-		END AS location, COUNT(o.index) AS numbers_of_sales, SUM(o.product_quantity) AS product_quantity_count FROM dim_store_details dsd
+		END AS location, COUNT(o.index) AS numbers_of_sales, SUM(o.product_quantity) AS product_quantity_count 
+        FROM dim_store_details dsd
 	JOIN orders_table o
 	ON o.store_code = dsd.store_code
 	GROUP BY location

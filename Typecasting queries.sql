@@ -23,7 +23,7 @@ WHERE table_name = 'dim_users';
 	
 -- Permenantly casts the data typers in the table
 ALTER TABLE dim_users
-	ALTER COLUMN first_name TYPE VARCHAR(225),
+	ALTER COLUMN first_name TYPE VARCHAR(225), -- The max limit for VARCHAR
 	ALTER COLUMN last_name TYPE VARCHAR(255),
 	ALTER COLUMN date_of_birth TYPE DATE USING CAST(date_of_birth AS DATE),
 	ALTER COLUMN join_date TYPE DATE USING CAST(join_date AS DATE),
@@ -285,12 +285,12 @@ ALTER TABLE orders_table
 ALTER TABLE orders_table
 	DROP CONSTRAINT orders_table_date_uuid_fkey,
 	DROP CONSTRAINT orders_table_date_uuid_fkey1,
-	DROP CONSTRAINT orders_table_date_uuid_fkey2; -- date
+	DROP CONSTRAINT orders_table_date_uuid_fkey2; 
 	
 ALTER TABLE orders_table
 	DROP CONSTRAINT orders_table_user_uuid_fkey,
 	DROP CONSTRAINT orders_table_user_uuid_fkey1,
-	DROP CONSTRAINT orders_table_user_uuid_fkey2; -- user
+	DROP CONSTRAINT orders_table_user_uuid_fkey2; 
 	
 ALTER TABLE orders_table
 	DROP CONSTRAINT orders_table_store_code_fkey,
