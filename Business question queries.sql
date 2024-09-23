@@ -4,12 +4,12 @@ FROM dim_store_details
 GROUP BY country_code
 ORDER BY total_no_stores DESC;
 
--- Which locations currently have the most stores
+-- Which locations currently have the most stores?
 SELECT locality, COUNT(DISTINCT(address)) AS total_no_stores FROM dim_store_details
 GROUP BY locality
 ORDER BY total_no_stores DESC;
 
--- Which month produced the most sales
+-- Which month produced the most sales?
 SELECT ddt.month, ROUND(SUM(o.product_quantity * dp.product_price)::numeric, 2) AS total_sales 
 FROM orders_table o
 JOIN dim_products dp
@@ -19,7 +19,7 @@ ON o.date_uuid = ddt.date_uuid
 GROUP BY ddt.month
 ORDER BY total_sales DESC;
 
--- Online vs Offline sales count
+-- What is the Online vs Offline sales count comparison?
 with agg_locations AS (
 	SELECT CASE 
 		WHEN dsd.store_type = 'Web Portal' THEN 'Web'
@@ -37,7 +37,7 @@ SELECT
 FROM agg_locations
 GROUP BY location;
 
--- Percentage of sales through each store
+-- What is the percentage of sales through each store?
 with loc_sales AS (
     SELECT dsd.store_type, 
     	ROUND(SUM(o.product_quantity * dp.product_price)::numeric, 2) AS total_sales
@@ -59,7 +59,7 @@ SELECT
 FROM loc_sales ls, sum_sales ss
 ORDER BY ls.total_sales DESC;
 
--- Which month in each year produced the highest cost of sales
+-- Which month in each year produced the highest cost of sales?
 with y_m_sales AS (
 	SELECT SUM(o.product_quantity * dp.product_price), ddt.year, ddt.month FROM orders_table o
 	JOIN dim_products dp
@@ -78,7 +78,7 @@ FROM dim_store_details
 GROUP BY country_code
 ORDER BY total_staff_numbers DESC;
 
--- Which German store type is selling the most
+-- Which German store type is selling the most?
 SELECT ROUND(SUM(o.product_quantity * dp.product_price)::numeric, 2) AS total_sales, dsd.store_type, MAX(dsd.country_code) AS country_code
 FROM orders_table o
 LEFT JOIN dim_store_details dsd 
@@ -89,7 +89,7 @@ WHERE dsd.country_code = 'DE'
 GROUP BY dsd.store_type
 ORDER BY total_sales DESC;
 
--- How quickly is the company making sales
+-- How quickly is the company making sales?
 WITH time_table AS (
     SELECT 
         EXTRACT(hour FROM CAST(timestamp AS time)) AS hour,
