@@ -1,6 +1,6 @@
 # Multinational Retail Data Centralisation
 
-This project was set by AICore and it implements an ETL ((Extract, Transform, Load) pipeline which is designed to extract data from various sources,  clean the data, and load it into a PostgreSQL database. This project also involves designing a star-shaped schema for the aforementioned database before querying the data based on several scenarios provided for us.
+This project was set by AICore and it implements an ETL (Extract, Transform, Load) pipeline which is designed to extract data from various sources,  clean the data, and load it into a PostgreSQL database. This project also involves designing a star-shaped schema for the aforementioned database before querying the data based on several scenarios provided for us.
 
 ## Scenario
 
