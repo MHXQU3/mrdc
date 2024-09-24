@@ -180,55 +180,60 @@ The cleaned data is stored in a PostgreSQL database using a star schema:
 
 - **Primary Key Information**:
     - **Table:** dim_date_times
-    - **Column Name:** date_uuid
-    - **Constraint Name:** dim_date_times_pkey
+        - **Column Name:** date_uuid
+        - **Constraint Name:** dim_date_times_pkey 
 
     - **Table:** dim_products
-    - **Column Name:** product_code
-    - **Constraint Name:** dim_products_pkey
+        - **Column Name:** product_code
+        - **Constraint Name:** dim_products_pkey
 
     - **Table:** dim_store_details
-    - **Column Name:** store_code
-    - **Constraint Name:** dim_store_details_pkey
+        - **Column Name:** store_code
+        - **Constraint Name:** dim_store_details_pkey
 
     - **Table:** dim_users
-    - **Column Name:** user_uuid
-    - **Constraint Name:** dim_users_pkey
+        - **Column Name:** user_uuid
+        - **Constraint Name:** dim_users_pkey
 
     - **Table:** dim_card_details
-    - **Column Name:** card_number
-    - **Constraint Name:** pk_card_number
+        - **Column Name:** card_number
+        - **Constraint Name:** pk_card_number
 
 - **Foreign Key Information**
-    - **Table:** orders_table
-    - **Column Name:** date_uuid
-    - **References Table:** dim_date_times
-    - **References Column:** date_uuid
-    - **Constraint Name:** fk_orders_date_uuid
+    - **Foreign Key 1**
+        - **Table:** orders_table
+        - **Column Name:** date_uuid
+        - **References Table:** dim_date_times
+        - **References Column:** date_uuid
+        - **Constraint Name:** fk_orders_date_uuid
 
-    - **Table:** orders_table
-    - **Column Name:** product_code
-    - **References Table:** dim_products
-    - **References Column:** product_code
-    - **Constraint Name:** fk_orders_product_code
+    - **Foreign Key 2**
+        - **Table:** orders_table
+        - **Column Name:** product_code
+        - **References Table:** dim_products
+        - **References Column:** product_code
+        - **Constraint Name:** fk_orders_product_code
 
-    - **Table:** orders_table
-    - **Column Name:** store_code
-    - **References Table:** dim_store_details
-    - **References Column:** store_code
-    - **Constraint Name:** fk_orders_store_code
+    - **Foreign Key 3**
+        - **Table:** orders_table
+        - **Column Name:** store_code
+        - **References Table:** dim_store_details
+        - **References Column:** store_code
+        - **Constraint Name:** fk_orders_store_code
 
-    - **Table:** orders_table
-    - **Column Name:** user_uuid
-    - **References Table:** dim_users
-    - **References Column:** user_uuid
-    - **Constraint Name:** fk_orders_user_uuid
+    - **Foreign Key 4**
+        - **Table:** orders_table
+        - **Column Name:** user_uuid
+        - **References Table:** dim_users
+        - **References Column:** user_uuid
+        - **Constraint Name:** fk_orders_user_uuid
 
-    - **Table:** orders_table
-    - **Column Name:** card_number
-    - **References Table:** dim_card_details
-    - **References Column:** card_number
-    - **Constraint Name:** fk_orders_card_number
+    - **Foreign Key 5**
+        - **Table:** orders_table
+        - **Column Name:** card_number
+        - **References Table:** dim_card_details
+        - **References Column:** card_number
+        - **Constraint Name:** fk_orders_card_number
 
 ## Typecasting The Various Tables
 
