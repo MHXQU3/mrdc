@@ -12,20 +12,17 @@ You will then query the database to get up-to-date metrics for the business.
 
 ## Table of Contents
 
-- Project Setup
-- Data Extraction
-- Data Cleaning
-- Database Schema
-- How to Run
-- Technologies
-- License
+- [Data Sources](#data-sources)
+- [Data Cleaning](#data-cleaning)
+- [Database Schema](#database-schema)
+- [Typecasting The Tables](#typecasting-the-tables)
+- [How to Run](#how-to-run)
+- [Requirements](#requirements)
+- [License](#license)
 
 
-### Requirements
 
-- Can be found in `requirements.txt`
-
-### Data Sources
+## Data Sources
 
 - **User Data**: The historical data of users which is currently stored in an AWS database in the cloud.
 - **Card Data**: Users card details which are stored in a PDF file in an AWS S3 bucket
@@ -167,7 +164,7 @@ _Note: Comments were removed in the code segments of this `README.md` file to en
 
 ## Database Schema
 
-The cleaned data is stored in a PostgreSQL database using a star schema:
+The cleaned data is stored in a PostgreSQL database using a star-based schema. Here is a quick overview:
 
 - **The Main Table**: `orders_table`
     - Contains the main transactional data for all sales.
@@ -235,8 +232,8 @@ The cleaned data is stored in a PostgreSQL database using a star schema:
         - **References Column:** card_number
         - **Constraint Name:** fk_orders_card_number
 
-## Typecasting The Various Tables
-
+## Typecasting The Tables
+This section focuses on developing the star-based schema of the database, starting off with ensuring that the columns are of the correct data types.
 - **Orders_table**
     - The VARCHAR constraints were found for each column that required one and then a character limit was placed upon them
     - Columns were typecasted to their appropriate data types
@@ -420,6 +417,9 @@ This script will:
 - Return out all the data as csv files
 - Load the cleaned data into the appropriate tables in your PostgreSQL database.
 
+## Requirements
+
+- Can be found in `requirements.txt`
 
 ## License
 
